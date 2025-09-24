@@ -12,6 +12,7 @@ export interface SpotifyUser {
     total: number;
   };
   country?: string;
+  product?: string; // 'free' | 'premium'
 }
 
 export interface SpotifyPlaylist {
