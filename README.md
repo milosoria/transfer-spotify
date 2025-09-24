@@ -100,20 +100,121 @@ The app implements proper rate limiting to respect Spotify's API limits:
 ### Project Structure
 
 ```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-├── lib/                 # Utility functions and services
-├── types/               # TypeScript type definitions
-└── ...
+transfer-spotify/
+├── .env.local              # Environment variables (not in repo)
+├── .eslintrc.json         # ESLint configuration
+├── .gitignore             # Git ignore rules
+├── next.config.js         # Next.js configuration
+├── package.json           # Dependencies and scripts
+├── postcss.config.js      # PostCSS configuration
+├── tailwind.config.js     # Tailwind CSS configuration
+├── tsconfig.json          # TypeScript configuration
+├── MVP_TASK_PLAN.md       # Detailed development task breakdown
+├── PRD.md                 # Product Requirements Document
+├── README.md              # This file
+│
+├── src/
+│   ├── app/                        # Next.js App Router (Pages & API)
+│   │   ├── globals.css            # Global styles and Tailwind imports
+│   │   ├── layout.tsx             # Root layout component
+│   │   ├── page.tsx               # Landing/home page
+│   │   │
+│   │   ├── api/                   # API Routes
+│   │   │   └── auth/              # Authentication endpoints
+│   │   │       ├── login/
+│   │   │       │   └── route.ts   # Initiate OAuth flow
+│   │   │       ├── callback/
+│   │   │       │   └── route.ts   # Handle OAuth callback
+│   │   │       └── refresh/
+│   │   │           └── route.ts   # Refresh access tokens
+│   │   │
+│   │   ├── auth/
+│   │   │   └── page.tsx           # Dual account authentication page
+│   │   ├── callback/
+│   │   │   └── page.tsx           # OAuth callback handler (legacy)
+│   │   ├── select/
+│   │   │   └── page.tsx           # Data category selection page
+│   │   └── transfer/
+│   │       └── page.tsx           # Transfer progress and execution page
+│   │
+│   ├── components/                 # Reusable React Components
+│   │   ├── AuthButton.tsx         # OAuth authentication button
+│   │   ├── ErrorBoundary.tsx      # React error boundary wrapper
+│   │   └── LoadingSpinner.tsx     # Loading state component
+│   │
+│   ├── lib/                       # Utility Functions & Services
+│   │   ├── auth-store.ts          # Zustand store for authentication state
+│   │   ├── spotify-api.ts         # Spotify Web API service class
+│   │   └── spotify-auth.ts        # OAuth utilities and token management
+│   │
+│   └── types/                     # TypeScript Type Definitions
+│       └── spotify.ts             # Spotify API response types
+│
+└── .next/                         # Next.js build output (auto-generated)
+    ├── cache/                     # Build cache
+    ├── server/                    # Server-side code
+    └── static/                    # Static assets
 ```
 
-### Key Components
+### Key Components & Architecture
 
-- `SpotifyApiService`: Handles all Spotify API interactions
-- `AuthStore`: Manages authentication state
-- `ErrorBoundary`: Catches and handles React errors
-- `TransferPage`: Orchestrates the transfer process
+#### Core Services (`src/lib/`)
+
+**`spotify-api.ts` - SpotifyApiService Class**
+- Centralized Spotify Web API client with axios
+- Implements rate limiting and retry logic for 429 responses
+- Handles all data fetching: playlists, tracks, artists, albums, users
+- Batch processing for large datasets (respects API limits)
+- Pagination helpers for endpoints with large result sets
+
+**`spotify-auth.ts` - OAuth Utilities**
+- Generates authorization URLs with required scopes
+- Exchanges authorization codes for access tokens
+- Handles token refresh logic
+- Manages OAuth flow state parameters
+
+**`auth-store.ts` - Authentication State Management**
+- Zustand store for dual account authentication
+- Session storage integration for token persistence
+- Manages source and destination account states
+- Handles authentication flow steps and navigation
+
+#### Pages & Routes (`src/app/`)
+
+**Authentication Flow**
+- `page.tsx` - Landing page with app introduction
+- `auth/page.tsx` - Dual account connection interface
+- `select/page.tsx` - Data category selection with previews
+- `transfer/page.tsx` - Real-time transfer progress monitoring
+
+**API Routes (`src/app/api/auth/`)**
+- `login/route.ts` - Initiates OAuth flow with proper scopes
+- `callback/route.ts` - Processes OAuth callback and token exchange
+- `refresh/route.ts` - Handles automatic token refresh
+
+#### Components (`src/components/`)
+
+**`AuthButton.tsx`**
+- Reusable OAuth authentication component
+- Supports both source and destination account types
+- Handles authentication state and loading indicators
+
+**`ErrorBoundary.tsx`**
+- React error boundary for graceful error handling
+- Catches JavaScript errors in component tree
+- Provides fallback UI and error reporting
+
+**`LoadingSpinner.tsx`**
+- Consistent loading state component
+- Used throughout the app for async operations
+
+#### Type Definitions (`src/types/`)
+
+**`spotify.ts`**
+- Complete TypeScript interfaces for Spotify API responses
+- Authentication token types
+- Transfer progress and state types
+- Ensures type safety across the entire application
 
 ## Important Notes
 
