@@ -1,6 +1,8 @@
 # Spotify Account Transfer
 
-A web application that enables users to transfer data from an old Spotify account to a new one without manual copying.
+> **Personal Project Disclaimer**: This tool was created for personal use to solve my own need to transfer data between Spotify accounts.
+
+A web application that enables users to transfer data from an old Spotify account to a new one without manual copying. Built as a personal solution for migrating music libraries when switching between Spotify accounts.
 
 ## Features
 
@@ -27,7 +29,7 @@ A web application that enables users to transfer data from an old Spotify accoun
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/milosoria/transfer-spotify.git
 cd transfer-spotify
 ```
 
@@ -41,12 +43,14 @@ Create a `.env.local` file with your Spotify app credentials:
 ```env
 SPOTIFY_CLIENT_ID=your_client_id_here
 SPOTIFY_CLIENT_SECRET=your_client_secret_here
-SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+SPOTIFY_REDIRECT_URI=http://localhost:3000/api/auth/callback
+NEXTAUTH_URL=http://localhost:3000
 ```
 
 4. Configure your Spotify app:
    - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-   - Add redirect URIs: `http://localhost:3000/callback` and `https://localhost:3000/callback`
+   - Add redirect URIs: `http://localhost:3000/api/auth/callback`
+   - **Important**: In Development Mode, you must add the email addresses of accounts you want to test with in the User Management section
 
 5. Run the development server:
 ```bash
@@ -111,25 +115,53 @@ src/
 - `ErrorBoundary`: Catches and handles React errors
 - `TransferPage`: Orchestrates the transfer process
 
+## Important Notes
+
+⚠️ **This is a personal tool** created for my own use case. While the code is public for educational purposes:
+
+- **Use at your own risk**: This tool directly modifies your Spotify account data
+- **Test thoroughly**: Always test with accounts you're comfortable experimenting with
+- **Respect rate limits**: The tool implements rate limiting, but be mindful of API usage
+- **Spotify ToS**: Ensure your usage complies with Spotify's Terms of Service and API guidelines
+- **Development Mode**: Your Spotify app must be in Development Mode or have users added to the allowlist
+
 ## Contributing
+
+While this was built as a personal tool, contributions are welcome:
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Test thoroughly with your own Spotify accounts
 5. Submit a pull request
 
 ## License
 
-This project is for educational purposes. Make sure to comply with Spotify's Terms of Service and API guidelines.
+This project is open-sourced for educational purposes. The author is not responsible for any issues arising from its use. Make sure to comply with Spotify's Terms of Service and API guidelines.
+
+## Troubleshooting
+
+**Common Issues:**
+
+1. **403 Forbidden errors**: 
+   - Ensure your Spotify app has the user email addresses added in User Management (Development Mode)
+   - Verify all required scopes are granted during authentication
+
+2. **Authentication failures**:
+   - Check your redirect URIs match exactly: `http://localhost:3000/api/auth/callback`
+   - Verify your `.env.local` file has the correct credentials
+
+3. **Transfer issues**:
+   - Check the browser console for detailed error messages
+   - Ensure both accounts have proper permissions for the data being transferred
 
 ## Support
 
-If you encounter issues:
-1. Check the browser console for errors
-2. Verify your Spotify app configuration
-3. Ensure your redirect URIs are correctly set
-4. Check that all required scopes are granted
+This is a personal project with limited support. If you encounter issues:
+1. Check the browser console for detailed error messages
+2. Verify your Spotify app configuration matches the setup instructions
+3. Review the troubleshooting section above
+4. Open an issue on GitHub with detailed logs (remove any sensitive information)
 
 ## Limitations
 
